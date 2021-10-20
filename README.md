@@ -1,2 +1,0 @@
-# javaRPG
-javaRPGの課題
