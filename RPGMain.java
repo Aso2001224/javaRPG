@@ -8,7 +8,7 @@ import rpgcreature.Slime;
 import rpgcreature.Wizard;
 import rpgcreature.MetalSlime;
 import rpgcreature.Monster;
-
+import rpgcreature.Golem;
 //////////////////////////////////////
 // メインクラス
 /////////////////////////////////////
@@ -17,7 +17,7 @@ public class RPGMain {
     private final int MONSTER_NUM=3;
     private final int COMMAND_BATTLE=1;
     private final int COMMAND_RECOVERY=2;
-
+    public int turn = 1;
     private Braver braver;
     private Monster[] monsters;
     public static void main(String[] args){
@@ -62,7 +62,7 @@ public class RPGMain {
                 //回復する
                 braver.recovery();
             }else{
-                System.out.println("1か2を入力してください");
+                System.out.println("1又は2を入力してください");
             }
         }
 
@@ -91,11 +91,13 @@ public class RPGMain {
      * 現在の状態を表示する
      */
     private void dispStatus(){
+        System.out.println("===="+this.turn+"ターン目====");
         System.out.println("==========================");
         System.out.printf( "= %s                 =\n",braver.getName());
         System.out.printf( "= HP:%3d                 =\n",braver.getHp());
         System.out.println("==========================");
         System.out.println("どうしますか？1:たたかう 2:回復");
+        this.turn++;
     }
 
     /**
@@ -106,13 +108,15 @@ public class RPGMain {
         monsters = new Monster[MONSTER_NUM];
         for(int i=0; i < MONSTER_NUM; i++){
             //乱数を取得してモンスターを決定する
-            int value = r.nextInt(3);
+            int value = r.nextInt(4);
             if( value == 0 ){
                 monsters[i] = new Slime();
             }else if( value == 1){
                 monsters[i] = new Wizard();
-            }else{
+            }else if(value == 2){
                 monsters[i] = new MetalSlime();
+            }else{
+                monsters[i] = new Golem();
             }
         }
         
@@ -146,12 +150,14 @@ public class RPGMain {
         //3体居なくなった？
         if( isNotThereAllMonster() ){
             //すべて居なくなったら終了
+           
             return false;
+           
         }
 
         //モンスター→主人公からの攻撃
         for(int i=0; i < MONSTER_NUM;i++){
-            if(monsters[i].isThere()){
+            if(monsters[i].isThere()== true && monsters[i].isAlive() == true ){
                 monsters[i].attack(braver);
             }
         }
@@ -159,6 +165,7 @@ public class RPGMain {
         //主人公が死んだか？
         if( !braver.isAlive() ){
             System.out.println("あなたはしにました");
+        
             return false;
         }
 
@@ -180,3 +187,4 @@ public class RPGMain {
         return isNotThereMonster;
     }
 }
+
